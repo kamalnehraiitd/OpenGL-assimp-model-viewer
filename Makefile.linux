@@ -1,0 +1,72 @@
+CXX    = g++
+CC     = gcc
+
+IMGUI_DIR = imgui
+
+CXXFLAGS = -std=c++20 \
+           -Iinclude \
+           -Iinclude/glad \
+           -I$(IMGUI_DIR) \
+           -I$(IMGUI_DIR)/backends
+
+CFLAGS   = -Iinclude -Iinclude/glad
+
+LDFLAGS  = -lglfw -lGL -ldl -lassimp -lpthread
+
+BUILD = build
+
+OBJS = \
+$(BUILD)/main.o \
+$(BUILD)/glad.o \
+$(BUILD)/imgui.o \
+$(BUILD)/imgui_draw.o \
+$(BUILD)/imgui_tables.o \
+$(BUILD)/imgui_widgets.o \
+$(BUILD)/imgui_demo.o \
+$(BUILD)/imgui_impl_glfw.o \
+$(BUILD)/imgui_impl_opengl3.o
+
+app: $(OBJS)
+	$(CXX) $(OBJS) -o app $(LDFLAGS)
+
+$(BUILD)/main.o: src/main.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c src/main.cpp -o $(BUILD)/main.o
+
+$(BUILD)/glad.o: src/glad.c
+	mkdir -p $(BUILD)
+	$(CC) $(CFLAGS) -c src/glad.c -o $(BUILD)/glad.o
+
+$(BUILD)/imgui.o: $(IMGUI_DIR)/imgui.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD)/imgui_draw.o: $(IMGUI_DIR)/imgui_draw.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD)/imgui_tables.o: $(IMGUI_DIR)/imgui_tables.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD)/imgui_widgets.o: $(IMGUI_DIR)/imgui_widgets.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD)/imgui_demo.o: $(IMGUI_DIR)/imgui_demo.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD)/imgui_impl_glfw.o: $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD)/imgui_impl_opengl3.o: $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+	mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -rf app $(BUILD)
+
+run: app
+	./app
